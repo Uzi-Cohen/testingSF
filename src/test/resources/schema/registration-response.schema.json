@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RegistrationResponse",
+  "type": "object",
+  "required": ["customerId", "email", "message"],
+  "properties": {
+    "customerId": { "type": "integer" },
+    "email":      { "type": "string" },
+    "message":    { "type": "string" }
+  }
+}

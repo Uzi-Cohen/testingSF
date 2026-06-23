@@ -1,0 +1,4 @@
+{
+  "error": "DUPLICATE_EMAIL",
+  "message": "The specified email already exists"
+}

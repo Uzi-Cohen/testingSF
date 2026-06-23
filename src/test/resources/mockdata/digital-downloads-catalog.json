@@ -1,0 +1,9 @@
+{
+  "category": "Digital Downloads",
+  "products": [
+    { "id": 31, "name": "Night Vision",       "price": 30.00 },
+    { "id": 32, "name": "Science & Faith",     "price": 25.00 },
+    { "id": 33, "name": "Health Book",         "price": 10.00 },
+    { "id": 34, "name": "Fiction Compilation", "price": 15.00 }
+  ]
+}

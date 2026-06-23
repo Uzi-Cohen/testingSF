@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!--
+  The fast, offline API/backend suite. Run with:  mvn test -Papi
+  (or: mvn test -DsuiteXmlFile=testng-api.xml)
+
+  parallel="classes": each class runs on its own thread and owns its own WireMock
+  instance on a random port, so classes are independent. No browser, no live site,
+  no screenshot/retry listeners — these tests are deterministic by construction.
+-->
+<suite name="DemoWebShop API Suite" verbose="1" parallel="classes" thread-count="2">
+
+    <test name="API and Backend">
+        <classes>
+            <class name="com.demoshop.api.tests.RegistrationApiTest"/>
+            <class name="com.demoshop.api.tests.DigitalDownloadsApiTest"/>
+            <class name="com.demoshop.api.tests.CartApiTest"/>
+            <class name="com.demoshop.api.tests.CatalogContractTest"/>
+        </classes>
+    </test>
+</suite>

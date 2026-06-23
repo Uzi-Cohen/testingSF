@@ -17,9 +17,27 @@
         <surefire.version>3.2.5</surefire.version>
         <logback.version>1.5.6</logback.version>
         <slf4j.version>2.0.13</slf4j.version>
+        <!-- API & backend test layer -->
+        <restassured.version>5.5.7</restassured.version>
+        <wiremock.version>3.13.2</wiremock.version>
+        <jackson.version>2.18.2</jackson.version>
         <!-- Override the suite from the CLI if needed: mvn test -DsuiteXmlFile=smoke.xml -->
         <suiteXmlFile>testng.xml</suiteXmlFile>
     </properties>
+
+    <!-- Align every Jackson module to one version so REST Assured's object mapping
+         can't drift across mismatched jackson-core / databind / annotations. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Selenium 4.6+ ships Selenium Manager, which auto-resolves the browser
@@ -53,6 +71,38 @@
             <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- ===================== API & backend test layer ===================== -->
+        <!-- REST Assured: the de-facto Java DSL for HTTP/REST API tests (Given-When-Then). -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${restassured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- json-schema-validator: assert a response honours the published contract. -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${restassured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- WireMock: a programmable mock backend, so API tests are deterministic and
+             need no external network (the fast base of the test pyramid). The shaded
+             'standalone' jar keeps its Jetty/Jackson off the test classpath, away from
+             REST Assured's. -->
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Jackson: record/POJO <-> JSON mapping for request and response bodies. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,4 +119,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- `mvn test -Papi` runs the fast, offline API/backend suite (WireMock-backed)
+             instead of the live-site UI suite. -->
+        <profile>
+            <id>api</id>
+            <properties>
+                <suiteXmlFile>testng-api.xml</suiteXmlFile>
+            </properties>
+        </profile>
+    </profiles>
 </project>

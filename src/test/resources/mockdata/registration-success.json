@@ -1,0 +1,5 @@
+{
+  "customerId": 1024,
+  "email": "{{jsonPath request.body '$.email'}}",
+  "message": "Your registration completed"
+}
