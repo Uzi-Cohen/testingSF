@@ -54,6 +54,22 @@ Beyond the brief, `RegistrationNegativeTest` verifies that re-using an existing 
 rejected ("The specified email already exists") — because a tester checks the unhappy path,
 not just the happy one. A wider exploratory defect charter lives in [`DEFECTS.md`](DEFECTS.md).
 
+## API & backend tests
+
+Alongside the UI suite there's a fast, **offline API/backend layer** (Java + REST Assured +
+TestNG) that runs against a **WireMock mock backend** serving JSON fixtures — no live site, no
+browser, deterministic. It's the broad base of the test pyramid beneath the slow UI E2E tests.
+
+```bash
+mvn test -Papi          # run the API/backend suite (no network needed)
+```
+
+- **Standard:** [`API_TEST_STANDARD.md`](API_TEST_STANDARD.md) — a 7-step recipe for writing one.
+- **Worked example:** [`RegistrationApiTest`](src/test/java/com/demoshop/api/tests/RegistrationApiTest.java)
+  — registration happy path + duplicate-e-mail rejection, asserting status, JSON schema, and body.
+- **Mock data:** [`src/test/resources/mockdata/`](src/test/resources/mockdata/); skeletons for the
+  catalogue, cart, and a backend contract test are stubbed with the recipe and ready to fill in.
+
 ## Design
 
 ```
@@ -120,8 +136,9 @@ A test you can't debug from its output isn't done. This suite ships with:
 
 - Point `DriverFactory` at a remote Grid / Selenoid / Perfecto via `RemoteWebDriver` and run
   cross-browser in parallel (the ThreadLocal driver already makes this safe).
-- Add an API-level setup step to create the user via REST so the UI test starts logged-in,
-  cutting registration out of every cart test.
+- Use the new API layer for **setup**: create the user via REST so the UI test starts
+  logged-in, cutting registration out of every cart test. (The API/backend suite itself is
+  already in place — see [`API_TEST_STANDARD.md`](API_TEST_STANDARD.md).)
 - Wire **Allure** for richer reporting (the failure screenshots would attach to each step).
 - Cover more unhappy paths from `DEFECTS.md` (password mismatch, invalid e-mail format, empty
   required fields, cart quantity math).
